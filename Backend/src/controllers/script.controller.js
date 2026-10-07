@@ -1,43 +1,29 @@
-import {
-  SYSTEM_PROMPT,
-  RESPONSE_SCHEMA,
-  SCRIPT_VALIDATOR,
-} from "../utlis/script.format.js";
-import { GoogleGenAI } from "@google/genai"; //SDK
+import { SCRIPT_VALIDATOR } from "../validator/script.validator.js";
+
+import { geminiScriptService } from "../services/gemini.script.service.js";
+import { getGroundingResearchContext } from "../services/grounding.service.js";
 
 export const generateScript = async (req, res, next) => {
   try {
-    const genAi = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+    //  va;idaying input - later it will done with zod
     const { topic, grade_level } = req.body;
-
     console.log(req.body);
-
     if (!topic || !topic.trim()) {
       return res.status(400).json({ error: "Topic is required" });
     }
 
-    const response = await genAi.models.generateContent({
-      // we need to continuously track implemented model for - updates and model related info - sometime the model get removed for archieve.
-      model: "gemini-2.5-flash",
-      contents: [
-        {
-          role: "user",
-          parts: [
-            {
-              text: `Topic: "${topic.trim()}"\nGrade Level: ${grade_level}\n\nGenerate the lesson script JSON now.`,
-            },
-          ],
-        },
-      ],
-      config: {
-        systemInstruction: SYSTEM_PROMPT,
-        temperature: 0.7,
-        responseMimeType: "application/json", //constarints
-        responseSchema: RESPONSE_SCHEMA, //schema constarints
-      },
+    // makking calls to module 2 - serp API
+    // initial setup to to never throw and can return "" - but in future will make it mandatory.
+    const grounding = await getGroundingResearchContext(topic);
+
+    // making calls to module 3 scriptgeneration
+    const responseScript = await geminiScriptService({
+      topic,
+      grade_level,
+      ...grounding?.context,
     });
 
-    const parsedJson = JSON.parse(response.text);
+    const parsedJson = JSON.parse(responseScript.text);
     const result = SCRIPT_VALIDATOR.safeParse(parsedJson);
 
     if (!result.success) {
@@ -46,7 +32,12 @@ export const generateScript = async (req, res, next) => {
     }
 
     console.log(result.data);
-    res.json({ success: true, script: result.data });
+    res.json({
+      success: true,
+      script: result.data,
+      grounded: !!grounding,
+      sources: grounding?.sources ?? [],
+    });
   } catch (err) {
     console.error("Script generetion error:", err.message);
     res.status(500).json({ error: "Failed to generate script. Trry again." });

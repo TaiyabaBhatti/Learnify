@@ -1,5 +1,4 @@
 import { Type } from "@google/genai";
-import { z } from "zod";
 
 export const RESPONSE_SCHEMA = {
   type: Type.OBJECT,
@@ -62,8 +61,11 @@ export const RESPONSE_SCHEMA = {
   ],
 };
 
+export const REQUEST_SCHEMA = {};
+
 export const SYSTEM_PROMPT = `You are Learnify, an AI educational assistant. 
   Convert any topic into a structured lesson script. 
+  If reference material is provided, use it only to verify facts, then explain in your own simple words for the grade level
 Rules:
 - Always 4 scenes
 - Narration: 2-4 simple sentences, age-appropriate vocabulary
@@ -72,22 +74,3 @@ Rules:
 - follow_up_questions: 3 short comprehension questions
   
   `;
-
-export const SCRIPT_VALIDATOR = z.object({
-  topic: z.string().min(1),
-  grade_level: z.string().min(1),
-  learning_objectives: z.string().min(1),
-  scenes: z
-    .array(
-      z.object({
-        scene_number: z.number().int(),
-        title: z.string().min(1),
-        narration: z.string().min(20),
-        key_concept: z.string().min(1),
-        visual_hint: z.string().min(1),
-        emoji: z.string().min(1),
-      })
-    )
-    .length(4),
-  follow_up_questions: z.array(z.string().min(1)).length(3),
-});
