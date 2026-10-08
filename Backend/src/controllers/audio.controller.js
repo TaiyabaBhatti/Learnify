@@ -20,11 +20,12 @@ export async function generateAudio(req, res) {
 
     const results = [];
     for (const [i, scene] of scenes.entries()) {
-      const audio = ensureWav(await generateSpeech(scene.narration));
-      const durationSec = getWavDuration(audio);
-      await fs.writeFile(audioPath, audio);
-      await fs.writeFile(audioPath, pcmToWav(pcm));
-      results.push({ scene: i + 1, audioPath, durationSec });
+      const jobDir = path.join(process.cwd(), "temp", crypto.randomUUID());
+      const audio = await generateSceneAudio(
+        scenes,
+        path.join(jobDir, "audio")
+      );
+      res.json({ audio });
     }
 
     res.json({ audio: results });

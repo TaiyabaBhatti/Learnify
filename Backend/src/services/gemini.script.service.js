@@ -13,7 +13,7 @@ export const geminiScriptService = async ({
   try {
     const response = await genAi.models.generateContent({
       // we need to continuously track implemented model for - updates and model related info - sometime the model get removed for archieve.
-      model: "gemini-3.8-flash",
+      model: "gemini-2.5-flash",
       contents: [
         {
           role: "user",
@@ -32,5 +32,8 @@ export const geminiScriptService = async ({
       },
     });
     return response;
-  } catch (error) {}
+  } catch (error) {
+    console.error("Gemini script generation failed:", error);
+    throw error; // let the caller/controller handle it
+  }
 };

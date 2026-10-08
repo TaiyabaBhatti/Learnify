@@ -16,10 +16,12 @@ app.use(express.urlencoded({ limit: "10kb", extended: true }));
 
 // routes
 import scriptRoute from "./routes/script.route.js";
-import generateAudio from "./routes/audio.route.js";
+import pipelineRoute from "./routes/generate.route.js";
+import { generateLesson } from "./controllers/pipeline.controller.js";
 
 app.use("/api", scriptRoute);
-app.use("/api", generateAudio);
+// app.use("/api", generateAudio);
+app.use("/api/lesson", pipelineRoute);
 
 // middlewares
 

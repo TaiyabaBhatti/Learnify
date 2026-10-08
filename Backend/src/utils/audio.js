@@ -1,25 +1,25 @@
-export const SAMPLE_RATE = 24000; // Gemini TTS output verify each time it changes
-export const BIT_DEPTH = 16;
-export const CHANNELS = 1;
+export const DEFAULT_SAMPLE_RATE = 24000;
+const BIT_DEPTH = 16;
+const CHANNELS = 1;
 
-export function getPcmDuration(pcm) {
-  const bytesPerSecond = SAMPLE_RATE * (BIT_DEPTH / 8) * CHANNELS;
-  return pcm.length / bytesPerSecond;
+export function parseSampleRate(mimeType) {
+  const m = /rate=(\d+)/.exec(mimeType || "");
+  return m ? Number(m[1]) : DEFAULT_SAMPLE_RATE;
 }
 
-export function pcmToWav(pcm) {
+export function pcmToWav(pcm, sampleRate = DEFAULT_SAMPLE_RATE) {
   const blockAlign = CHANNELS * (BIT_DEPTH / 8);
-  const byteRate = SAMPLE_RATE * blockAlign;
+  const byteRate = sampleRate * blockAlign;
   const header = Buffer.alloc(44);
 
   header.write("RIFF", 0);
   header.writeUInt32LE(36 + pcm.length, 4);
   header.write("WAVE", 8);
   header.write("fmt ", 12);
-  header.writeUInt32LE(16, 16); // fmt chunk size
-  header.writeUInt16LE(1, 20); // PCM format
+  header.writeUInt32LE(16, 16);
+  header.writeUInt16LE(1, 20);
   header.writeUInt16LE(CHANNELS, 22);
-  header.writeUInt32LE(SAMPLE_RATE, 24);
+  header.writeUInt32LE(sampleRate, 24);
   header.writeUInt32LE(byteRate, 28);
   header.writeUInt16LE(blockAlign, 32);
   header.writeUInt16LE(BIT_DEPTH, 34);
@@ -29,22 +29,22 @@ export function pcmToWav(pcm) {
   return Buffer.concat([header, pcm]);
 }
 
-// Works for both cases: already WAV, or raw PCM
-export function ensureWav(buf) {
-  return buf.toString("ascii", 0, 4) === "RIFF" ? buf : pcmToWav(buf);
+export function ensureWav(buf, mimeType) {
+  return buf.toString("ascii", 0, 4) === "RIFF"
+    ? buf
+    : pcmToWav(buf, parseSampleRate(mimeType));
 }
 
 export function getWavDuration(wav) {
   const byteRate = wav.readUInt32LE(28);
-  let offset = 12; // skip "RIFF....WAVE"
+  let offset = 12;
   while (offset + 8 <= wav.length) {
     const id = wav.toString("ascii", offset, offset + 4);
-    let size = wav.readUInt32LE(offset + 4);
+    const size = wav.readUInt32LE(offset + 4);
     if (id === "data") {
-      size = Math.min(size, wav.length - offset - 8); // guard bad sizes
-      return size / byteRate;
+      return Math.min(size, wav.length - offset - 8) / byteRate;
     }
-    offset += 8 + size;
+    offset += 8 + size + (size % 2); // chunks are padded to even length
   }
   throw new Error("No data chunk found in WAV");
 }
