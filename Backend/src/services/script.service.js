@@ -10,7 +10,6 @@ export const createScript = async ({ topic, grade_level }) => {
     grade_level,
     ...grounding?.context,
   });
-  console.log("Script", response);
   const result = SCRIPT_VALIDATOR.safeParse(JSON.parse(response.text));
   if (!result.success) {
     console.log("Script validation fails: ", result.error.issues);

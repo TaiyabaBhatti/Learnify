@@ -1,0 +1,67 @@
+{
+  "scenes": [
+    {
+      "scene": 1,
+      "durationSec": 14.131,
+      "audioUrl": "sample.wav",
+      "layout": "hub",
+      "elements": [
+        {
+          "id": "t",
+          "type": "title",
+          "text": "Basics of Operating System",
+          "startSec": 0.3
+        },
+        {
+          "id": "x",
+          "type": "text",
+          "text": "CPUs and devices share memory through a common bus",
+          "startSec": 2.0
+        },
+        {
+          "id": "mem",
+          "type": "box",
+          "label": "MEMORY",
+          "style": "accent",
+          "startSec": 4.5
+        },
+        { "id": "cpu", "type": "box", "label": "CPU", "startSec": 5.5 },
+        {
+          "id": "kb",
+          "type": "icon",
+          "name": "keyboard",
+          "label": "Keyboard",
+          "startSec": 7.0
+        },
+        {
+          "id": "mon",
+          "type": "icon",
+          "name": "monitor",
+          "label": "Monitor",
+          "startSec": 8.0
+        },
+        {
+          "id": "l1",
+          "type": "line",
+          "from": "mem",
+          "to": "cpu",
+          "startSec": 9.0
+        },
+        {
+          "id": "l2",
+          "type": "line",
+          "from": "mem",
+          "to": "kb",
+          "startSec": 9.8
+        },
+        {
+          "id": "l3",
+          "type": "line",
+          "from": "mem",
+          "to": "mon",
+          "startSec": 10.4
+        }
+      ]
+    }
+  ]
+}

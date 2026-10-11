@@ -1,0 +1,3 @@
+{
+  "ignore": ["temp", "outputs", "whisper.cpp", "public", "node_modules"]
+}
