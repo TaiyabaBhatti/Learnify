@@ -8,8 +8,6 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<PortalPage />} />
-      <Route path="/home" element={<Home />} />
-      {/* <Route path="/generate-script" element = {}/> */}
     </Routes>
   );
 };

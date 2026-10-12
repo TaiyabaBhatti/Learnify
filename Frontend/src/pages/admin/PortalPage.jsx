@@ -16,7 +16,7 @@ const PortalPage = () => {
         setSelectedSection={setSelectedSection}
       />
 
-      <main className="ml-56 bg-opacity-blue h-screen">
+      <main className="ml-56 bg-opacity-blue min-h-screen">
         {selectedSection === "dashboard" && <Dashboard />}
         {selectedSection === "listing" && <ListingProperties />}
       </main>
