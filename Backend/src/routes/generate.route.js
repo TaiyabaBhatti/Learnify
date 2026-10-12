@@ -1,7 +1,15 @@
 import { Router } from "express";
-import { generateScript } from "../controllers/script.controller.js";
-import { generateLesson } from "../controllers/pipeline.controller.js";
+
+import {
+  generateLesson,
+  getJobStatus,
+  streamJobEvents,
+} from "../controllers/pipeline.controller.js";
+getJobStatus;
 
 const router = Router();
 router.post("/generate", generateLesson);
+
+router.get("/:jobId/events", streamJobEvents);
+router.get("/:jobId", getJobStatus);
 export default router;

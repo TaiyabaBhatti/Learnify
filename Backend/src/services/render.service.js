@@ -17,7 +17,7 @@ const getBundle = () => {
   return bundlePromise;
 };
 
-export const renderLessonVideo = async ({ jobId, lessonProps }) => {
+export const renderLessonVideo = async ({ jobId, lessonProps, onProgress }) => {
   const serveUrl = await getBundle();
   const outDir = path.join(process.cwd(), "outputs");
   await fs.mkdir(outDir, { recursive: true });
@@ -28,7 +28,8 @@ export const renderLessonVideo = async ({ jobId, lessonProps }) => {
     id: "Lesson",
     inputProps: lessonProps,
   });
-  let lastPct = -10;
+  onProgress?.(0, "rendering");
+  let lastPct = -1;
   await renderMedia({
     composition,
     serveUrl,
@@ -37,9 +38,10 @@ export const renderLessonVideo = async ({ jobId, lessonProps }) => {
     inputProps: lessonProps,
     onProgress: ({ progress }) => {
       const pct = Math.floor(progress * 100);
-      if (pct >= lastPct + 10) {
+      if (pct !== lastPct) {
         lastPct = pct;
-        console.log(`[render] ${pct}%`);
+        onProgress?.(progress, "rendering");
+        if (pct % 10 === 0) console.log(`[render] ${pct}%`);
       }
     },
   });

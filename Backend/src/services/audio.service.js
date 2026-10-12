@@ -3,7 +3,8 @@ import path from "path";
 import { generateSpeech } from "./gemini.tts.service.js";
 import { ensureWav, getWavDuration } from "../utils/audio.js";
 
-export async function generateSceneAudio(scenes, outDir) {
+export async function generateSceneAudio(scenes, outDir, onProgress) {
+  let done = 0;
   await fs.mkdir(outDir, { recursive: true });
 
   const results = [];
@@ -13,6 +14,7 @@ export async function generateSceneAudio(scenes, outDir) {
 
     const { data, mimeType } = await generateSpeech(text);
     const wav = ensureWav(data, mimeType);
+
     const durationSec = Number(getWavDuration(wav).toFixed(3));
 
     const audioPath = path.join(
@@ -22,6 +24,7 @@ export async function generateSceneAudio(scenes, outDir) {
     await fs.writeFile(audioPath, wav);
 
     results.push({ scene: i + 1, audioPath, durationSec });
+    onProgress?.(++done, scenes.length);
   }
   return results; // sequential on purpose: respects free-tier rate limits
 }
