@@ -39,12 +39,12 @@ const InputFormInterface = ({ setScript, setLoading, setErrorMessage }) => {
 
   return (
     <section className="bg-white p-6 w-3xl">
-      <form onSubmit={handleSubmit(handleGenerate)} className="space-y-3">
+      <form onSubmit={handleSubmit(handleGenerate)} className="space-y-1.5">
         <InputFormField
           labelFor={"topic"}
           message={"Topic is required"}
           type={"text"}
-          placeholder={"How does rain form?"}
+          placeholder={"For Example: How does rain form?"}
           register={register}
           errors={errors}
         />

@@ -1,2 +1,9 @@
 @import "tailwindcss";
 @tailwind utilities;
+
+@theme {
+  --color-light-theme: #cbe8ef;
+  --color-light-mint: #4e696f;
+  --color-opacity-blue: #f5faff;
+  --color-opacity-blue-2: #eaf5ff;
+}

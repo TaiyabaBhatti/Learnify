@@ -13,7 +13,6 @@ const InputFormField = ({
   return (
     <>
       <div className="">
-        <label className="">Topic</label>
         <input
           type={type}
           label={placeholder}

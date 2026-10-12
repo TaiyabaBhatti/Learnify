@@ -14,21 +14,21 @@ const GradeLevelBlock = ({ setValue, watch, labelFor, errors, register }) => {
           required: "Please select a grade level",
         })}
       />
-      <label className="block text-xs">Grade Level</label>
+
       <div className="flex gap-3">
         {GRADE_LEVELS.map((grade) => (
           <button
             type="button"
             onClick={() => setValue("grade_level", grade.value)}
             key={grade.value}
-            className={`${
+            className={`px-5 py-2 text-xs font-semibold rounded-2xl${
               selectedGrade === grade.value
-                ? "bg-blue-100 text-blue-700"
-                : " bg-white text-gray-700"
+                ? " bg-light-mint text-white"
+                : " bg-opacity-blue-2 "
             } cursor-pointer `}
           >
-            <div className="">{grade.label}</div>
-            <div className="">{grade.age}</div>
+            <div className="">Grade {grade.label}</div>
+            <div className="">{grade.age} </div>
           </button>
         ))}
       </div>
