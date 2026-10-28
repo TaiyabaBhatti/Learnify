@@ -36,7 +36,6 @@ export const generateLesson = async (req, res, next) => {
 
 // GET /:jobId  -> one-time JSON snapshot (also the polling fallback)
 export const getJobStatus = (req, res) => {
-  const job = getJob(req.params.jobId);
   if (!job) return res.status(404).json({ error: "Job not found" });
   const last = job.events.at(-1);
   res.json({
